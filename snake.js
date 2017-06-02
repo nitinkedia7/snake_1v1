@@ -147,7 +147,7 @@ var snake = {
 function preload() {
   sound_intro = loadSound("sounds/pacman_beginning.mp3");
   sound_background = loadSound("sounds/pacman_intermission.wav");
-  sound_eatFood = loadSound("sounds/pacman_eatfruit.mp3");
+  sound_eatFood = loadSound("sounds/pacman_eatghost.mp3");
   sound_death = loadSound("sounds/pacman_death.mp3");
 }
 
