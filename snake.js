@@ -1,3 +1,13 @@
+/* TODO
+Sounds
+Points
+press this button to start
+game over
+diamond food
+*/
+
+
+
 var mWidth = 480;
 var mHeight = 360;
 var nx = 40;
@@ -109,15 +119,22 @@ var snake = {
         return false;
       }
     }
+  },
+  startGame: function() {
+    this.isRunning += 1;
+    if(sound_intro.isPlaying()) {
+      sound_intro.stop();
+    }
   }
 }
 
 function preload() {
-  sound_intro = loadSound("pacman_beginning.mp3");
-  sound_background = loadSound("pacman_chomp.mp3");
-  sound_eatFood = loadSound("pacman_eatfruit.mp3");
-  sound_death = loadSound("pacman_death.mp3");
+  sound_intro = loadSound("sounds/pacman_beginning.mp3");
+  sound_background = loadSound("sounds/pacman_chomp.mp3");
+  sound_eatFood = loadSound("sounds/pacman_eatfruit.mp3");
+  sound_death = loadSound("sounds/pacman_death.mp3");
 }
+
 function setup() {
 	// console.log(frame_rates);
 	createCanvas(mWidth, mHeight);
@@ -129,13 +146,18 @@ function setup() {
 function draw() {
 	snake.show();
 	snake.update();
+
+  if (!sound_intro.isPlaying() && snake.isRunning == 0) {
+      snake.startGame();
+  }
 }
 
 file:///home/nk7/snake/snake.js
 function keyPressed() {
   if (keyCode == 32) {
     // console.log("start")
-    snake.isRunning += 1;
+    // snake.isRunning += 1;
+    snake.startGame();
   }
   if (keyCode == UP_ARROW) {
     // console.log("up");
