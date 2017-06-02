@@ -66,10 +66,16 @@ var snake = {
   		if (this.food[0] == ohx && this.food[1] == ohy) {
   			// console.log("Length before : " + this.body.length);
   			this.body = [curTail].concat(this.body);
+        sound_background.pause();
         sound_eatFood.play();
   			this.food = getRandomPosition();
         // console.log("Length After : " + this.body.length);
       }
+      // ensure that background music is running if nothing else is
+      if (!sound_eatFood.isPlaying() && !sound_background.isPlaying()) {
+        sound_background.play();
+      }
+
       if (velocity == "w") {
   			headx = ohx;
   			heady = ohy - 1;
