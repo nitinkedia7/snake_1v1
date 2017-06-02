@@ -125,12 +125,22 @@ var snake = {
     if(sound_intro.isPlaying()) {
       sound_intro.stop();
     }
+    sound_background.loop();
+    // sound_background.setVolume();
+  },
+  pauseOrResume: function() {
+    this.isRunning += 1;
+    if (this.isRunning % 2 == 0) {
+      sound_background.pause();
+    } else {
+      sound_background.play();
+    }
   }
 }
 
 function preload() {
   sound_intro = loadSound("sounds/pacman_beginning.mp3");
-  sound_background = loadSound("sounds/pacman_chomp.mp3");
+  sound_background = loadSound("sounds/pacman_intermission.wav");
   sound_eatFood = loadSound("sounds/pacman_eatfruit.mp3");
   sound_death = loadSound("sounds/pacman_death.mp3");
 }
@@ -157,7 +167,13 @@ function keyPressed() {
   if (keyCode == 32) {
     // console.log("start")
     // snake.isRunning += 1;
-    snake.startGame();
+    if (snake.isRunning == 0) {
+      snake.startGame();
+    }
+    else {
+      // snake.isRunning += 1;
+      snake.pauseOrResume();
+    }
   }
   if (keyCode == UP_ARROW) {
     // console.log("up");
