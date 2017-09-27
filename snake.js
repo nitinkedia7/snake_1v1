@@ -1,18 +1,10 @@
-/* TODO
-Sounds
-Points
-press this button to start
-game over
-diamond food
-*/
-
-
-
-var mWidth = 480;
-var mHeight = 360;
-var nx = 40;
-var ny = 30;
-var frame_rate = 10;
+var nSnakes = 3;
+var nFood = 10;
+var mWidth = 1280;
+var mHeight = 720;
+var nx = 128;
+var ny = 72;
+var frame_rate = 30;
 
 function display_block(p) {
 	var i = p[0];
@@ -24,10 +16,67 @@ function display_block(p) {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
 function getRandomPosition() {
 	return [getRandomInt(0, nx-1), getRandomInt(0,ny-1)];
 }
+
+function makeBody() {
+  var a = getRandomInt(0,nx-1);
+  var b = getRandomInt(0,ny-1);
+  var body = [[a,b]];
+  var l = Math.floor((Math.random() * 10) + 3)
+  for (var i = 1; i < l; i++) {
+    a = a+1;
+    a = (a+nx)%nx;
+    body = body.concat([[a, b]]);
+  }
+  return body;
+}
+function makeBodies() {
+  var snakes;
+  for (var i = 0; i < nSnakes; i++) {
+    if (i == 0) snakes = [makeBody()];
+    else snakes = snakes.concat([makeBody()]);
+  }
+  return snakes;
+}
+
+function makeVelocities() {
+  var velocity;
+  for (var i = 0; i < nSnakes; i++) {
+    if (i == 0) velocity = ["d"];
+    else velocity = velocity.concat(["d"]);
+  }
+  return velocity;
+}
+function makePoints() {
+  var point;
+  for (var i = 0; i < nSnakes; i++) {
+    if (i == 0) point = [0];
+    else point = point.concat([0]);
+  }
+  return point;
+}
+
+function makeSnakeFinished() {
+  var snakeFinished;
+  for (var i = 0; i < nSnakes; i++) {
+    if (i == 0) snakeFinished = [false];
+    else snakeFinished = snakeFinished.concat([false]);
+  }
+  return snakeFinished;
+}
+
+function makeFood() {
+  var food;
+  for (var i = 0; i < nFood; i++) {
+    if (i == 0) food = [getRandomPosition()];
+    else food = food.concat([getRandomPosition()]);
+  }
+  console.log(food);
+  return food;
+}
+
 var sound_intro;
 var sound_background;
 var sound_eatFood;
@@ -35,104 +84,147 @@ var sound_death;
 
 function initializeSnake() {
   return {
-  	body: [[1,1], [2,1], [3,1], [4,1], [5,1], [6,1], [7,1], [8,1], [9,1]],
-  	velocity: "d",
-  	body_color: "#000000",
-  	food_color: "#000000",
-  	food : getRandomPosition(),
+    body: makeBodies(),
+    velocity: makeVelocities(),
+    body_color: ["#9400d3", "#ffff00", "#4b0082", "#0000ff", "#00ff00", "#ff7f00"],
+
+    point: makePoints(),
+
+  	food : makeFood(),
+    food_color: "#ff0000",
+ 
     isRunning: 0,
+    snakeFinished: makeSnakeFinished(),
     game_finsihed: false,
-  	show: function() {
+  	
+    show: function() {
   		clear();
-  		background('#e0e0e0');
-  		fill(color(this.food_color));
-  		display_block(this.food);
+  		background('#000000');
 
-  		fill(color(this.body_color));
-  		for (var i = 0; i<this.body.length; i++) {
-  			display_block(this.body[i]);
-  		}
+  		for(var i = 0; i < nSnakes; i++) {
+        fill(color(this.body_color[i%6]));
+  		  for (var j = 0; j < this.body[i].length; j++) {
+  			 display_block(this.body[i][j]);
+  		  }
+      }
+
+      for (var i = 0; i < nFood; i++) {
+        fill(color(this.body_color[getRandomInt(0,5)]));
+        display_block(this.food[i]);
+      }
   	},
+
   	update: function() {
-      if (this.isRunning%2 == 1 && this.isDead() == false) {
-    		//move snake ahead
-    		var curTail = this.body[0];
-    		for(var i=0; i<this.body.length-1; i++) {
-    			this.body[i] = this.body[i+1];
-    		}
+      for (var i = 0; i < nSnakes; i++) {
+        if (this.isRunning%2 == 1 && this.isDead(i) == false && !this.snakeFinished[i]) {
+      		//move snake ahead
+      		var curTail = this.body[i][0];
+      		
+          for(var j = 0; j < this.body[i].length-1; j++) {
+      			this.body[i][j] = this.body[i][j+1];
+      		}
 
-    		var ohx = this.body[this.body.length-1][0];
-    		var ohy = this.body[this.body.length-1][1];
-    		var headx, heady;
-    		var velocity = this.velocity;
-    		if (this.food[0] == ohx && this.food[1] == ohy) {
-    			// console.log("Length before : " + this.body.length);
-    			this.body = [curTail].concat(this.body);
-          sound_background.pause();
-          sound_eatFood.play();
-    			this.food = getRandomPosition();
-          // console.log("Length After : " + this.body.length);
+      		var ohx = this.body[i][this.body[i].length-1][0];
+      		var ohy = this.body[i][this.body[i].length-1][1];
+      		var headx, heady;
+      		var velocity = this.velocity[i];
+          for (var f = 0; f < nFood; f++) {
+      		if (this.food[f][0] == ohx && this.food[f][1] == ohy) {
+      			// console.log("Length before : " + this.body.length);
+      			this.body[i] = [curTail].concat(this.body[i]);
+            sound_background.pause();
+            sound_eatFood.play();
+            this.point[i] = this.point[i] + 10;
+            console.log(this.point);
+      			this.food[f] = getRandomPosition();
+            // console.log("Length After : " + this.body.length);
+          }
+          // ensure that background music is running if nothing else is
+          if (!sound_eatFood.isPlaying() && !sound_background.isPlaying()) {
+            sound_background.play();
+          }
+          }
+          if (velocity == "w") {
+      			headx = ohx;
+      			heady = ohy - 1;
+      		} else if (velocity == "a") {
+      			headx = ohx - 1;
+      			heady = ohy;
+      		} else if (velocity == "s") {
+      			headx = ohx;
+      			heady = ohy + 1;
+      		} else if (velocity == "d") {
+      			headx = ohx + 1;
+      			heady = ohy;
+      		}
+      		// headx = ((headx % nx) + nx) % nx ;
+      		// heady = ((heady % ny) + ny) % ny ;
+          headx = (headx + nx) % nx ;
+          heady = (heady + ny) % ny ;
+      		this.body[i][this.body[i].length-1] = [headx, heady];
+      	}
+        if (this.isRunning%2 == 1 && this.isDead(i) == true && !this.game_finsihed && !this.snakeFinished[i]) {
+          console.log("dead!");
+          //console.log(this.isRunning);
+          sound_background.stop();
+          sound_death.play();
+          this.snakeFinished[i] = true;
+          this.body[i] = [[-1, -1]];
+          // this.isRunning += 1;
+          // this.isRunning = 0;
+          //this.game_finsihed = true;
         }
-        // ensure that background music is running if nothing else is
-        if (!sound_eatFood.isPlaying() && !sound_background.isPlaying()) {
-          sound_background.play();
+      }
+      if (this.isRunning%2 == 1 && !this.game_finsihed) {
+        var allDead = true;
+        for (var i = 0; i < nSnakes; i++) {
+          if (this.isDead(i) == false) allDead = false;
         }
-
-        if (velocity == "w") {
-    			headx = ohx;
-    			heady = ohy - 1;
-    		} else if (velocity == "a") {
-    			headx = ohx - 1;
-    			heady = ohy;
-    		} else if (velocity == "s") {
-    			headx = ohx;
-    			heady = ohy + 1;
-    		} else if (velocity == "d") {
-    			headx = ohx + 1;
-    			heady = ohy;
-    		}
-    		headx = ((headx % nx) + nx) % nx ;
-    		heady = ((heady % ny) + ny) % ny ;
-    		this.body[this.body.length-1] = [headx, heady];
-    	}
-      if (this.isRunning%2 == 1 && this.isDead() == true && !this.game_finsihed) {
-        console.log("dead!");
-        console.log(this.isRunning);
-        sound_background.stop();
-        sound_death.play();
-        // this.isRunning += 1;
-        // this.isRunning = 0;
-        this.game_finsihed = true;
+        if (allDead == true) {
+          console.log("dead!");
+          console.log(this.isRunning);
+          sound_background.stop();
+          sound_death.play();
+          // this.isRunning += 1;
+          // this.isRunning = 0;
+          this.game_finsihed = true;
+        }
       }
     },
 
-  	updateVelocity: function(key) {
+  	updateVelocity: function(i, key) {
   		// console.log("updating velocity : " + key);
-  		if (this.velocity == 'w' || this.velocity == "s") {
+      if (this.velocity[i] == key) {
+
+      }
+  		if (this.velocity[i] == 'w' || this.velocity[i] == "s") {
   			if (key=="a" || key=="d") {
-  				this.velocity = key;
+  				this.velocity[i] = key;
   			}
   		}
-  		if (this.velocity == 'a' || this.velocity == "d") {
+  		if (this.velocity[i] == 'a' || this.velocity[i] == "d") {
   			if (key=="s" || key=="w") {
-  				this.velocity = key;
+  				this.velocity[i] = key;
   			}
-  		}
+      }
   		// console.log(this.velocity);
   	},
-    isDead: function() {
-      var l = this.body.length;
-      for(var i=0; i<l-1; i++) {
-        if (this.body[l-1][0] == this.body[i][0] && this.body[l-1][1] == this.body[i][1] ) {
-          // console.log("Dead");
-          return true;
-        }
-        if (i == l-2) {
-          // console.log("Alive");
-          return false;
+    
+    isDead: function(i) {
+      var li = this.body[i].length;
+      for (var j = 0; j < nSnakes; j++) {
+        var lj = this.body[j].length;
+        for (var k = 0; k < lj; k++) {
+          if (this.body[i][li-1][0] == this.body[j][k][0] && this.body[i][li-1][1] == this.body[j][k][1]) {
+            if (!(i == j && k == lj-1))
+            // console.log("Dead");
+            return true;
+          }
         }
       }
+      return false;
     },
+
     startGame: function() {
       this.isRunning += 1;
       if(sound_intro.isPlaying()) {
@@ -199,18 +291,34 @@ function keyPressed() {
       snake.startGame();
     }
   }
+
   if (keyCode == UP_ARROW) {
     // console.log("up");
-    snake.updateVelocity("w");
+    snake.updateVelocity(0, "w");
   } else if (keyCode == DOWN_ARROW) {
     // console.log("down");
-    snake.updateVelocity("s");
+    snake.updateVelocity(0, "s");
   } else if (keyCode == LEFT_ARROW) {
     // console.log("left");
-    snake.updateVelocity("a");
+    snake.updateVelocity(0, "a");
   } else if (keyCode == RIGHT_ARROW) {
     // console.log("right");
-    snake.updateVelocity("d");
+    snake.updateVelocity(0, "d");
   }
+
+  if (keyCode == 87) {
+    // console.log("up");
+    snake.updateVelocity(1, "w");
+  } else if (keyCode == 83) {
+    // console.log("down");
+    snake.updateVelocity(1, "s");
+  } else if (keyCode == 65) {
+    // console.log("left");
+    snake.updateVelocity(1, "a");
+  } else if (keyCode == 68) {
+    // console.log("right");
+    snake.updateVelocity(1, "d");
+  }
+
   return false; // prevent default
 }
