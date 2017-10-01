@@ -1,4 +1,9 @@
-# Classic Coplayer Snake Game with Sounds. Try it [here](https://nitinkedia7.github.io/snake_game/).
+# Classic Co-player Snake Game. Try it [here](https://nitinkedia7.github.io/snake_game/).
+
+## Features:
+- Pacman Sounds
+- Pause/Resume
+- Modular js engine (can support any number of snakes)
 
 ## Controls
 Action | Player 1 | Player 2
@@ -7,12 +12,13 @@ Up | UP_ARROW | W
 Down | DOWN_ARROW | S
 Left | LEFT_ARROW | A
 Right | RIGHT_ARROW | D
+Pause/Resume | SPACE | SPACE
 
 ## Rules
 Obviously the rules of a normal snake game apply, additional coplayer rules follow:
-- Player 1 spawns as purple a snake while Player 2 spawns as a yellow snake.
+- Player 1 spawns as RED snake while Player 2 spawns as a GREEN snake.
 - A snake dies if it's head touches any other part of itself or any part of another snake.
-- Points are displayed in console.
+- Points are displayed as an array in console.
 
 ## Build With:
 - HTML
@@ -20,9 +26,6 @@ Obviously the rules of a normal snake game apply, additional coplayer rules foll
 - Javascript
 - [p5.js](https://p5js.org/)
 
-## Additional notes:
-The js engine actually supports any number of snakes and foods.
-By default it is set to Coplayer for less congestion in keyboard while playing. Improvements and comments are welcome.
 
 Made by [**Nitin Kedia**](https://www.github.com/nitinkedia7/)
 

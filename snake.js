@@ -5,8 +5,8 @@ var mWidth = 1280;
 var mHeight = 720;
 var nx = 128;
 var ny = 72;
-var frame_rate = 20;
-var color_array = ["#9400d3", "#ffff00", "#4b0082", "#0000ff", "#00ff00", "#ff7f00"];
+var frame_rate = 15;
+var color_array = ["#ff0000", "#00ff00", "0000ff", "#4b0082", "#9400d3", "#ff7f00"];
 
 var sound_intro;
 var sound_background;
