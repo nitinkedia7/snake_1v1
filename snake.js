@@ -1,10 +1,10 @@
-var nSnakes = 3;
+var nSnakes = 2;
 var nFood = 10;
 var mWidth = 1280;
 var mHeight = 720;
 var nx = 128;
 var ny = 72;
-var frame_rate = 30;
+var frame_rate = 20;
 
 function display_block(p) {
 	var i = p[0];
@@ -318,6 +318,19 @@ function keyPressed() {
   } else if (keyCode == 68) {
     // console.log("right");
     snake.updateVelocity(1, "d");
+  }
+  if (keyCode == 75) {
+    // console.log("up");
+    snake.updateVelocity(2, "w");
+  } else if (keyCode == 74) {
+    // console.log("down");
+    snake.updateVelocity(2, "s");
+  } else if (keyCode == 72) {
+    // console.log("left");
+    snake.updateVelocity(2, "a");
+  } else if (keyCode == 76) {
+    // console.log("right");
+    snake.updateVelocity(2, "d");
   }
 
   return false; // prevent default
