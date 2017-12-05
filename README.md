@@ -1,9 +1,9 @@
-# Classic Co-player Snake Game. Try it [here](https://nitinkedia7.github.io/snake_game/).
+# Classic 1v1 Snake Game. Try it [here](https://nitinkedia7.github.io/snake_1v1/).
 
 ## Features:
 - Pacman Sounds
 - Pause/Resume
-- Modular js engine (can support any number of snakes)
+- Modular js code (can support any number of snakes)
 
 ## Controls
 Action | Player 1 | Player 2
